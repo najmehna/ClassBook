@@ -7,16 +7,55 @@
 //
 
 import UIKit
+import  MobileCoreServices
 
-class RegisterViewController: UIViewController, UITextFieldDelegate{
+class RegisterViewController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate{
 
+    @IBOutlet weak var profileImageView: UIImageView!
     @IBAction func cameraBtnClicked(_ sender: UIButton) {
+        let picker = UIImagePickerController()
+        picker.sourceType = .camera
+        picker.mediaTypes = [kUTTypeImage as String]
+        picker.allowsEditing = true
+        picker.delegate = self
+        present(picker, animated:true)
     }
     
     @IBOutlet weak var fullnameTextField: UITextField!
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var birthdayTextField: UITextField!
+    @IBAction func uploadBtnClicked(_ sender: UIButton) {
+        if allFieldsOk(){
+            let uid = UserDefaults.standard.object(forKey: "currentUser") as! String
+            let myManager = FirebaseManager()
+            let myStorageManager = StorageManager()
+            let myImage = profileImageView.image ?? UIImage(named: "PurpleLeaves")
+            let myImageData = myImage?.jpegData(compressionQuality: 1)
+            
+            myStorageManager.uploadProfileImage(userID: uid, data: myImageData!) { (success, url) in
+                if success{
+                    let myProfile = Profile(name: self.fullnameTextField.text!, email: self.emailTextField.text!, birthday: self.birthdayTextField.text!, pic: url!, key: uid)
+                    
+                    myManager.uploadProfile(userId: uid, dict: myProfile.getDict())
+                    DispatchQueue.main.async {
+                        //showAlert(viewController: self, "Updated the profile...")
+                        self.presentingViewController?.dismiss(animated: true, completion: nil)
+                        
+                        }
+                    
+                }else {
+                    print("error adding user to database")
+                }
+            }
+        }
+    }
+    
+    func allFieldsOk()-> Bool{
+        let haveText = fullnameTextField.hasText && emailTextField.hasText && birthdayTextField.hasText
+        return haveText
+    }
     var datePicker: UIDatePicker?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         fullnameTextField.delegate = self
@@ -40,6 +79,18 @@ class RegisterViewController: UIViewController, UITextFieldDelegate{
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        if let image = (info[UIImagePickerController.InfoKey.editedImage] ?? info[UIImagePickerController.InfoKey.originalImage]) as? UIImage{
+            profileImageView.image = image
+        }
+        picker.presentingViewController?.dismiss(animated: true, completion: nil)
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.presentingViewController?.dismiss(animated: true, completion: nil)
+
     }
 
     /*

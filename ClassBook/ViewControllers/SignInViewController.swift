@@ -35,9 +35,14 @@ class SignInViewController: UIViewController {
         let myCreditential = PhoneAuthProvider.provider().credential(withVerificationID: UserDefaults.standard.string(forKey: "verificationID")!, verificationCode: myCode)
         Auth.auth().signIn(with: myCreditential) { (result, error) in
             if error == nil{
-                print(result?.user.phoneNumber)
-                if let phoneNumber = result?.user.phoneNumber{
-                    self.isNewUser(userID:phoneNumber)
+                print(result?.user.uid)
+                if let uid = result?.user.uid{
+                    if self.isNewUser(userID:result!.user.uid){
+                        
+                    }else {
+                        
+                    }
+                    UserDefaults.standard.set(uid, forKey: "currentUser")
                     self.performSegue(withIdentifier: "goToHome", sender: self)
             }
             }else{

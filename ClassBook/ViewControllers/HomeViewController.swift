@@ -10,6 +10,10 @@ import UIKit
 
 class HomeViewController: UIViewController {
 
+    @IBOutlet weak var signOutButton: UIButton!
+    @IBOutlet weak var userButton: UIButton!
+    @IBOutlet weak var userImageView: UIImageView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
