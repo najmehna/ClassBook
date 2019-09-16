@@ -38,8 +38,8 @@ class RegisterViewController: UIViewController, UITextFieldDelegate, UIImagePick
                     
                     myManager.uploadProfile(userId: uid, dict: myProfile.getDict())
                     DispatchQueue.main.async {
-                        //showAlert(viewController: self, "Updated the profile...")
-                        self.presentingViewController?.dismiss(animated: true, completion: nil)
+                        showAlert(viewController: self, "Updated the profile...")
+                        //self.presentingViewController?.dismiss(animated: true, completion: nil)
                         
                         }
                     

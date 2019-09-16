@@ -22,5 +22,20 @@ struct Profile{
         let myDict: [String:Any] = ["name":self.name, "email":self.email, "birthday" : self.birthday, "url" : self.pic]
         return myDict
     }
-  
+}
+
+struct Post{
+    var content: String
+    var author: String
+    var pic: String
+    var date: String
+    var key: String
+    //var picData : Data?
+    func getKey() -> String{
+        return self.key
+    }
+    func getDict()-> [String:Any]{
+        let myDict: [String:Any] = ["postContent":self.content, "author":self.author, "url" : self.pic, "date": self.date]
+        return myDict
+    }
 }

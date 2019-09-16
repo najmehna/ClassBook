@@ -30,9 +30,9 @@ class StorageManager {
             }
         }
     }
-    func uploadPostImage(userID: String,postKey: String, data:Data){
-        let imageName = userID.hasSuffix(".jpg") ? userID : userID + ".jpg"
-        let myRef = ref.child("images").child("posts/\(postKey)/\(imageName)")
+    func uploadPostImage(postID: String,data:Data, completionBlock: @escaping (_ success:Bool,_ url:String?)->Void){
+        let imageName = postID.hasSuffix(".jpg") ? postID : postID + ".jpg"
+        let myRef = ref.child("images").child("posts/\(imageName)")
         //let uplaodTask =
         myRef.putData(data, metadata: nil) { (metaData, error) in
             if error == nil{
@@ -40,14 +40,17 @@ class StorageManager {
                     return
                 }
                 let size = metaData.size
-                let contnt = metaData.contentType
-                print("The size is: \(size) and the type is: \(contnt.debugDescription)")
+                let url = metaData.path
+                completionBlock(true, url)
+                print("The size is: \(size) and the type is: \(url.debugDescription)")
+            }else {
+                completionBlock(false, nil)
             }
         }
     }
     
-    func downloadProfileImage(imageName: String, completionBlock: @escaping (Bool,Data?)->Void){
-        let myRef = ref.child("images").child("profilePics/\(imageName)")
+    func downloadImage(imageName: String, completionBlock: @escaping (Bool,Data?)->Void){
+        let myRef = ref.child(imageName)
         myRef.getData(maxSize: 2 * 1024 * 1024) { (data, error) in
             if error == nil{
                 completionBlock(true, data!)

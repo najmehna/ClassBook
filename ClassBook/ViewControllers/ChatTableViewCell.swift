@@ -24,5 +24,12 @@ class ChatTableViewCell: UITableViewCell {
 
         // Configure the view for the selected state
     }
+    
+    func setValues(post: Post, pic: Data){
+        contentLabel.text = post.content
+        userNameLabel.text = post.author
+        postImageView.image = UIImage(data: pic, scale: 1.0)
+    }
 
+    
 }
