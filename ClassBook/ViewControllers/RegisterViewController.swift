@@ -11,6 +11,7 @@ import  MobileCoreServices
 
 class RegisterViewController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate{
 
+    @IBOutlet weak var contentView: UIView!
     @IBOutlet weak var profileImageView: UIImageView!
     @IBAction func cameraBtnClicked(_ sender: UIButton) {
         let picker = UIImagePickerController()
@@ -29,12 +30,12 @@ class RegisterViewController: UIViewController, UITextFieldDelegate, UIImagePick
             let uid = UserDefaults.standard.object(forKey: "currentUser") as! String
             let myManager = FirebaseManager()
             let myStorageManager = StorageManager()
-            let myImage = profileImageView.image ?? UIImage(named: "PurpleLeaves")
+            let myImage = profileImageView.image ?? UIImage(named: defaultImage)
             let myImageData = myImage?.jpegData(compressionQuality: 1)
             
             myStorageManager.uploadProfileImage(userID: uid, data: myImageData!) { (success, url) in
                 if success{
-                    let myProfile = Profile(name: self.fullnameTextField.text!, email: self.emailTextField.text!, birthday: self.birthdayTextField.text!, pic: url!, key: uid)
+                    let myProfile = Profile(uid: UserDefaults.standard.string(forKey: "currentUser")!, name: self.fullnameTextField.text!, email: self.emailTextField.text!, birthday: self.birthdayTextField.text!, pic: url!)
                     
                     myManager.uploadProfile(userId: uid, dict: myProfile.getDict())
                     DispatchQueue.main.async {
@@ -58,6 +59,8 @@ class RegisterViewController: UIViewController, UITextFieldDelegate, UIImagePick
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        contentView.layer.cornerRadius = 15
+        
         fullnameTextField.delegate = self
         emailTextField.delegate = self
         birthdayTextField.delegate = self

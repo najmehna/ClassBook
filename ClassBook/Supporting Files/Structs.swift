@@ -7,35 +7,41 @@
 //
 
 import Foundation
+let defaultImage = "purpleLeaves"
 
 struct Profile{
+    var uid: String
     var name: String
     var email: String
     var birthday : String
     var pic: String
-    var key: String
+    //var key: String
     //var image: UIImage
-    func getKey() -> String{
-        return key
-    }
+//    func getKey() -> String{
+//        return key
+//    }
     func getDict()-> [String:Any]{
-        let myDict: [String:Any] = ["name":self.name, "email":self.email, "birthday" : self.birthday, "url" : self.pic]
+        let myDict: [String:Any] = ["uid":self.uid, "name":self.name, "email":self.email, "birthday" : self.birthday, "url" : self.pic]
         return myDict
     }
 }
 
 struct Post{
-    var content: String
-    var author: String
-    var pic: String
-    var date: String
-    var key: String
+    var postContent: String
+    var userID: String
+    var userName: String
+    var userImageUrl: String
+    var postImageUrl: String
+    var timeStamp: String
+    var isLiked: Bool
+    var isDeleted: Bool
+    
     //var picData : Data?
-    func getKey() -> String{
-        return self.key
-    }
+//    func getKey() -> String{
+//        return self.key
+//    }
     func getDict()-> [String:Any]{
-        let myDict: [String:Any] = ["postContent":self.content, "author":self.author, "url" : self.pic, "date": self.date]
+        let myDict: [String:Any] = ["postContent":self.postContent, "userID":self.userID, "userName" : self.userName, "timeStamp": self.timeStamp, "userImageUrl": self.userImageUrl, "postImageUrl":self.postImageUrl, "isLiked": self.isLiked, "isDeleted": self.isDeleted]
         return myDict
     }
 }

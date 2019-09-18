@@ -16,3 +16,16 @@ func showAlert(viewController: UIViewController, _ message: String){
     viewController.present(myAlert, animated: true, completion: nil)
     
 }
+extension UIImageView {
+    func load(url: URL) {
+        DispatchQueue.global().async { [weak self] in
+            if let data = try? Data(contentsOf: url) {
+                if let image = UIImage(data: data) {
+                    DispatchQueue.main.async {
+                        self?.image = image
+                    }
+                }
+            }
+        }
+    }
+}

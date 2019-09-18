@@ -42,6 +42,8 @@ class SignInViewController: UIViewController {
                     }else {
                         
                     }
+                    UserDefaults.standard.set(result?.user.displayName, forKey: "userName")
+                    
                     UserDefaults.standard.set(uid, forKey: "currentUser")
                     self.performSegue(withIdentifier: "goToHome", sender: self)
             }
@@ -51,7 +53,7 @@ class SignInViewController: UIViewController {
         }
     }
     func isNewUser(userID: String)->Bool{
-        var isNew = true
+        var isNew = false
         
         return isNew
     }
