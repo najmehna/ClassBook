@@ -39,7 +39,8 @@ class PostViewController: UIViewController , UIImagePickerControllerDelegate, UI
             //storageManager.uploadPostImage(userID: <#T##String#>, postKey: <#T##String#>, data: <#T##Data#>)
             
             let uid =  currentUser!
-            let myTime = String(Int(Date().timeIntervalSinceReferenceDate))
+            let myTimeStamp = Date().timeIntervalSinceReferenceDate
+            let myTime = String(Int(myTimeStamp))
             let postId = myTime + uid
             let myManager = FirebaseManager()
             let myStorageManager = StorageManager()
@@ -49,7 +50,8 @@ class PostViewController: UIViewController , UIImagePickerControllerDelegate, UI
                 if success{
                     var myPost: Post
                     if self.currentProfile?.uid != ""{
-                    myPost = Post(postContent: self.postTextArea.text, userID: self.currentProfile!.uid, userName: self.currentProfile!.name, userImageUrl: self.currentProfile!.pic, postImageUrl: url!, timeStamp: myTime, isLiked: false, isDeleted: false)
+                    //if self.currentProfile != nil{
+                    myPost = Post(postContent: self.postTextArea.text, userID: self.currentProfile!.uid, userName: self.currentProfile!.name, userImageUrl: self.currentProfile!.pic, postImageUrl: url!, timeStamp: String(myTimeStamp), isLiked: false, isDeleted: false)
                     }else{
                         myPost = Post(postContent: self.postTextArea.text, userID: "", userName: "New User", userImageUrl: "", postImageUrl: url!, timeStamp: myTime, isLiked: false, isDeleted: false)
                     }
@@ -78,15 +80,22 @@ class PostViewController: UIViewController , UIImagePickerControllerDelegate, UI
     override func viewDidLoad() {
         super.viewDidLoad()
         contentView.layer.cornerRadius = 15
-        profileButton.layer.cornerRadius = 10
+        profileButton.layer.cornerRadius = 5
         profileImageView.layer.cornerRadius = 15
-        currentProfile = UserDefaults.standard.object(forKey:"currentProfile") as? Profile
-        if currentUser == nil {
+        if let savedPerson = UserDefaults.standard.object(forKey: "currentProfile") as? Data
+        {
+            let decoder = JSONDecoder()
+            currentProfile = try? decoder.decode(Profile.self, from: savedPerson)
+            if currentProfile != nil{
+                print(currentProfile!.name)
+            }
+        }
+        if currentProfile == nil {
             let date = Date()
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "dd MMM YYYY"
             let mydate = dateFormatter.string(from: date)
-            currentProfile = Profile(uid: "", name: "Guest", email: "", birthday: mydate, pic: "")
+            currentProfile = Profile(uid: "1",name: "New User", email: "", birthday: mydate, pic: "")
         } else{
             setUserDetailsInView()
             }
@@ -94,10 +103,19 @@ class PostViewController: UIViewController , UIImagePickerControllerDelegate, UI
     }
 
     func setUserDetailsInView(){
-        let myUrl = URL(fileURLWithPath: currentProfile!.pic)
-        profileImageView.load(url: myUrl)
+        //setImage(myUrl: currentProfile!.pic)
+       // profileImageView.setImageFromUrl(myUrl: currentProfile!.pic)
         profileButton.setTitle(currentProfile!.name, for: .normal)
     }
+    
+   // func setImage(myUrl:String){
+//        let myStorage = StorageManager()
+//        myStorage.downloadImage(imageName: myUrl) { (success, data) in
+//            DispatchQueue.main.async {
+//                self.profileImageView.image = success ? UIImage(data: data!, scale: 0.5) : UIImage(named: defaultImage)
+//            }
+//        }
+//    }
     
     func allFieldsOk()-> Bool{
         postImage = postImage ?? postImageView.image

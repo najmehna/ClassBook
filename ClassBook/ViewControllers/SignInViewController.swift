@@ -30,6 +30,17 @@ class SignInViewController: UIViewController {
         
     }
     @IBAction func signInBtnClicked(_ sender: UIButton) {
+//        if currentUser == nil{ signMeIn()}
+//        if currentUser != nil{
+//            setCurrentProfile(for: currentUser!)
+//            performSegue(withIdentifier: "goToHome", sender: self)
+//        }else{
+//            showAlert(viewController: self, "there was a problem signing you in...")
+//        }
+        signMeIn()
+    }
+    
+    func signMeIn(){
         guard let myCode = code.text else{ return }
         
         let myCreditential = PhoneAuthProvider.provider().credential(withVerificationID: UserDefaults.standard.string(forKey: "verificationID")!, verificationCode: myCode)
@@ -37,26 +48,47 @@ class SignInViewController: UIViewController {
             if error == nil{
                 print(result?.user.uid)
                 if let uid = result?.user.uid{
-                    if self.isNewUser(userID:result!.user.uid){
-                        
-                    }else {
-                        
-                    }
-                    UserDefaults.standard.set(result?.user.displayName, forKey: "userName")
-                    
-                    UserDefaults.standard.set(uid, forKey: "currentUser")
+//                    if isNewUser(userID: uid){
+//                    }else {
+//                    }
+                    //UserDefaults.standard.set(result?.user.displayName, forKey: "userName")
+                    self.setCurrentProfile(for: uid)
                     self.performSegue(withIdentifier: "goToHome", sender: self)
-            }
+                    //self.currentUser = uid
+                    //UserDefaults.standard.set(uid, forKey: "currentUser")
+                    //self.
+                }
             }else{
                 print("Error signing the user in \(error!.localizedDescription)")
             }
         }
     }
-    func isNewUser(userID: String)->Bool{
-        var isNew = false
-        
-        return isNew
+    
+    func setCurrentProfile(for currentUser: String){
+        let myManager = FirebaseManager()
+        myManager.getUserData(for: currentUser) { (success, result) in
+            if success{
+                if result.count>0{
+                print(result)
+                let myProfile = Profile(uid: result["uid"] as! String, name: result["name"] as! String, email: result["email"] as! String, birthday: result["birthday"] as! String, pic: result["url"] as! String)
+                let encoder = JSONEncoder()
+                if let encoded = try? encoder.encode(myProfile) {
+                    UserDefaults.standard.set(encoded, forKey: "currentProfile")
+                }
+                }
+                else{
+                    UserDefaults.standard.set(nil, forKey: "currentProfile")
+//                    let myProfile = Profile(uid: currentUser, name: "New User", email: "", birthday: "", pic: "")
+//                    let encoder = JSONEncoder()
+//                    if let encoded = try? encoder.encode(myProfile) {
+//                        UserDefaults.standard.set(encoded, forKey: "currentProfile")
+//                    }
+                }
+            }
+        }
     }
+
+   
     override func viewDidLoad() {
         super.viewDidLoad()
         myView.layer.cornerRadius = 15

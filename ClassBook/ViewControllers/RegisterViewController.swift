@@ -36,13 +36,18 @@ class RegisterViewController: UIViewController, UITextFieldDelegate, UIImagePick
             myStorageManager.uploadProfileImage(userID: uid, data: myImageData!) { (success, url) in
                 if success{
                     let myProfile = Profile(uid: UserDefaults.standard.string(forKey: "currentUser")!, name: self.fullnameTextField.text!, email: self.emailTextField.text!, birthday: self.birthdayTextField.text!, pic: url!)
-                    
+                    let encoder = JSONEncoder()
+                    if let encoded = try? encoder.encode(myProfile) {
+                        UserDefaults.standard.set(encoded, forKey: "currentProfile")
+                    }
                     myManager.uploadProfile(userId: uid, dict: myProfile.getDict())
-                    DispatchQueue.main.async {
-                        showAlert(viewController: self, "Updated the profile...")
-                        //self.presentingViewController?.dismiss(animated: true, completion: nil)
+                    //DispatchQueue.main.async {
+                        //showAlert(viewController: self, "Updated the profile...")
+                        let homeVC =  self.storyboard?.instantiateViewController(withIdentifier: "TabBarController") as! UITabBarController
+                        homeVC.selectedIndex = 0
+                        self.present(homeVC, animated: true, completion: nil)
                         
-                        }
+                       // }
                     
                 }else {
                     print("error adding user to database")

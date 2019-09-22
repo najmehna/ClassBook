@@ -18,6 +18,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         FirebaseApp.configure()
+        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+        window = UIWindow(frame: UIScreen.main.bounds)
+        window?.makeKeyAndVisible()
+        let currentProfile = UserDefaults.standard.object(forKey: "currentProfile")
+        if currentProfile != nil{
+            let nextViewController = storyBoard.instantiateViewController(withIdentifier: "TabBarController") as! UITabBarController
+            window?.rootViewController = nextViewController
+            
+        } else{
+            let nextViewController = storyBoard.instantiateViewController(withIdentifier: "SignInViewController") as! SignInViewController
+            window?.rootViewController = nextViewController
+        }
         return true
     }
 

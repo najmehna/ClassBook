@@ -8,6 +8,8 @@
 
 import Foundation
 import UIKit
+import Kingfisher
+
 
 func showAlert(viewController: UIViewController, _ message: String){
     let myAlert = UIAlertController(title: "Alert", message: message, preferredStyle: .alert)
@@ -17,15 +19,30 @@ func showAlert(viewController: UIViewController, _ message: String){
     
 }
 extension UIImageView {
-    func load(url: URL) {
-        DispatchQueue.global().async { [weak self] in
-            if let data = try? Data(contentsOf: url) {
-                if let image = UIImage(data: data) {
-                    DispatchQueue.main.async {
-                        self?.image = image
-                    }
-                }
-            }
-        }
+//    func setImageFromUrl(myUrl:String){
+//        let myStorage = StorageManager()
+//        myStorage.downloadImage(imageName: myUrl) { (success, data) in
+//            DispatchQueue.main.async {
+//                self.image = success ? UIImage(data: data!, scale: 0.5) : UIImage(named: defaultImage)
+//            }
+//        }
+//    }
+    
+    func setImageFromUrl(myUrl: String) {
+        print("Download Started\(myUrl)")
+        let url:URL = URL(fileURLWithPath: myUrl)
+        self.kf.setImage(with: url)
+//        DispatchQueue.global().async {
+//            DispatchQueue.main.async {
+//                self.kf.setImage(with: url, placeholder: nil, options:
+//                    nil, progressBlock: nil, completionHandler: { (imgSrc, err, nil,
+//                        url) in
+//                        DispatchQueue.main.async {
+//                            self.kf.setImage(with: url)
+//                        }
+//                })
+//            }
+//        }
     }
 }
+

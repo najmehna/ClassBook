@@ -22,9 +22,19 @@ class StorageManager {
                     return
                 }
                 let size = metaData.size
-                let url = metaData.path
-                completionBlock(true, url)
-                print("The size is: \(size) and the type is: \(url.debugDescription)")
+                
+                // to download the uploaded URL from firebase
+                myRef.downloadURL(completion: { (url, err) in
+                    if (url != nil){
+                        print("User Downloded Url \(url?.absoluteString)")
+                        let urlString = url?.absoluteString
+                        completionBlock(true, urlString)
+                        //                        print("The size is: \(size) and the type is: \(url.debugDescription)")
+                    }
+                    else{
+                        completionBlock(false, nil)
+                    }
+                })
             }else {
                 completionBlock(false, nil)
             }
@@ -40,9 +50,19 @@ class StorageManager {
                     return
                 }
                 let size = metaData.size
-                let url = metaData.path
-                completionBlock(true, url)
-                print("The size is: \(size) and the type is: \(url.debugDescription)")
+//                let url = metaData.path
+                // to download the uploaded URL from firebase
+                myRef.downloadURL(completion: { (url, err) in
+                    if (url != nil){
+                        print("Downloded Url \(url?.absoluteString)")
+                        let urlString = url?.absoluteString
+                        completionBlock(true, urlString)
+//                        print("The size is: \(size) and the type is: \(url.debugDescription)")
+                    }
+                    else{
+                        completionBlock(false, nil)
+                    }
+                })
             }else {
                 completionBlock(false, nil)
             }

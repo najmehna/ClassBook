@@ -9,7 +9,7 @@
 import Foundation
 let defaultImage = "purpleLeaves"
 
-struct Profile{
+struct Profile: Encodable, Decodable{
     var uid: String
     var name: String
     var email: String
@@ -35,6 +35,7 @@ struct Post{
     var timeStamp: String
     var isLiked: Bool
     var isDeleted: Bool
+//    var postPhotoData: Data?
     
     //var picData : Data?
 //    func getKey() -> String{

@@ -44,7 +44,7 @@ class FirebaseManager {
 //    }
     func getPosts(completionBlock:@escaping (_ success: Bool, _ snapshot: [String:Any])->Void){
         var postDict : [String : Any] = [:]
-        ref.child("posts").queryOrdered(byChild: "date").observe(.value, with: { (snapshot) in
+        ref.child("posts").queryOrdered(byChild: "timeStamp").observe(.value, with: { (snapshot) in
             postDict = snapshot.value as? [String : Any] ?? [:]
             completionBlock(true,postDict)
         }) { (error) in
