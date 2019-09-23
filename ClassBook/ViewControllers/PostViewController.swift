@@ -90,7 +90,7 @@ class PostViewController: UIViewController , UIImagePickerControllerDelegate, UI
                 print(currentProfile!.name)
             }
         }
-        if currentProfile == nil {
+        if currentProfile!.name == "New User" {
             let date = Date()
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "dd MMM YYYY"
@@ -104,7 +104,7 @@ class PostViewController: UIViewController , UIImagePickerControllerDelegate, UI
 
     func setUserDetailsInView(){
         //setImage(myUrl: currentProfile!.pic)
-       // profileImageView.setImageFromUrl(myUrl: currentProfile!.pic)
+       profileImageView.setImageFromUrl(myUrl: currentProfile!.pic)
         profileButton.setTitle(currentProfile!.name, for: .normal)
     }
     

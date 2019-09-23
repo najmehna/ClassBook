@@ -11,6 +11,7 @@ import  MobileCoreServices
 
 class RegisterViewController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate{
 
+    var currentProfile : Profile?
     @IBOutlet weak var contentView: UIView!
     @IBOutlet weak var profileImageView: UIImageView!
     @IBAction func cameraBtnClicked(_ sender: UIButton) {
@@ -27,7 +28,8 @@ class RegisterViewController: UIViewController, UITextFieldDelegate, UIImagePick
     @IBOutlet weak var birthdayTextField: UITextField!
     @IBAction func uploadBtnClicked(_ sender: UIButton) {
         if allFieldsOk(){
-            let uid = UserDefaults.standard.object(forKey: "currentUser") as! String
+            
+            let uid = currentProfile!.uid
             let myManager = FirebaseManager()
             let myStorageManager = StorageManager()
             let myImage = profileImageView.image ?? UIImage(named: defaultImage)
@@ -35,7 +37,7 @@ class RegisterViewController: UIViewController, UITextFieldDelegate, UIImagePick
             
             myStorageManager.uploadProfileImage(userID: uid, data: myImageData!) { (success, url) in
                 if success{
-                    let myProfile = Profile(uid: UserDefaults.standard.string(forKey: "currentUser")!, name: self.fullnameTextField.text!, email: self.emailTextField.text!, birthday: self.birthdayTextField.text!, pic: url!)
+                    let myProfile = Profile(uid: self.currentProfile!.uid, name: self.fullnameTextField.text!, email: self.emailTextField.text!, birthday: self.birthdayTextField.text!, pic: url!)
                     let encoder = JSONEncoder()
                     if let encoded = try? encoder.encode(myProfile) {
                         UserDefaults.standard.set(encoded, forKey: "currentProfile")
@@ -73,13 +75,29 @@ class RegisterViewController: UIViewController, UITextFieldDelegate, UIImagePick
         datePicker?.datePickerMode = .date
         datePicker?.addTarget(self, action: #selector(dateValueChanged), for: .valueChanged)
         birthdayTextField.inputView = datePicker
-        
+        setUpUserDetails()
         // Do any additional setup after loading the view.
     }
     @objc func dateValueChanged(picker: UIDatePicker){
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd MMM YYYY"
         birthdayTextField.text = dateFormatter.string(from: picker.date)
+    }
+    func setUpUserDetails(){
+        if let savedPerson = UserDefaults.standard.object(forKey: "currentProfile") as? Data
+        {
+            let decoder = JSONDecoder()
+            currentProfile = try? decoder.decode(Profile.self, from: savedPerson)
+            if currentProfile!.name != "New User" {
+                fullnameTextField.text = currentProfile!.name
+                fullnameTextField.isEnabled = false
+                emailTextField.text = currentProfile!.email
+                birthdayTextField.text = currentProfile!.birthday
+                profileImageView.setImageFromUrl(myUrl: currentProfile!.pic)
+            }else{
+                fullnameTextField.isEnabled = true
+            }
+        }
     }
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         view.endEditing(true)

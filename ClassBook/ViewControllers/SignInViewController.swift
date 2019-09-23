@@ -10,6 +10,8 @@ import UIKit
 import Firebase
 
 class SignInViewController: UIViewController {
+    
+   // var currentUser: String?
 
     @IBOutlet weak var phoneNumber: UITextField!
     @IBOutlet weak var code: UITextField!
@@ -48,15 +50,8 @@ class SignInViewController: UIViewController {
             if error == nil{
                 print(result?.user.uid)
                 if let uid = result?.user.uid{
-//                    if isNewUser(userID: uid){
-//                    }else {
-//                    }
-                    //UserDefaults.standard.set(result?.user.displayName, forKey: "userName")
                     self.setCurrentProfile(for: uid)
                     self.performSegue(withIdentifier: "goToHome", sender: self)
-                    //self.currentUser = uid
-                    //UserDefaults.standard.set(uid, forKey: "currentUser")
-                    //self.
                 }
             }else{
                 print("Error signing the user in \(error!.localizedDescription)")
@@ -68,26 +63,37 @@ class SignInViewController: UIViewController {
         let myManager = FirebaseManager()
         myManager.getUserData(for: currentUser) { (success, result) in
             if success{
-                if result.count>0{
+                let myProfile:Profile
+                if result.count > 0 {
                 print(result)
-                let myProfile = Profile(uid: result["uid"] as! String, name: result["name"] as! String, email: result["email"] as! String, birthday: result["birthday"] as! String, pic: result["url"] as! String)
+                myProfile = Profile(uid: result["uid"] as! String, name: result["name"] as! String, email: result["email"] as! String, birthday: result["birthday"] as! String, pic: result["url"] as! String)
+                }
+                else{
+                    let thedate = Date()
+                    let dateFormatter = DateFormatter()
+                    dateFormatter.dateFormat = "dd MMM YYYY"
+                    let mydate = dateFormatter.string(from: thedate)
+                    myProfile = Profile(uid: currentUser ,name: "New User", email: "", birthday: mydate, pic: "")
+                }
                 let encoder = JSONEncoder()
                 if let encoded = try? encoder.encode(myProfile) {
                     UserDefaults.standard.set(encoded, forKey: "currentProfile")
                 }
-                }
-                else{
-                    UserDefaults.standard.set(nil, forKey: "currentProfile")
-//                    let myProfile = Profile(uid: currentUser, name: "New User", email: "", birthday: "", pic: "")
-//                    let encoder = JSONEncoder()
-//                    if let encoded = try? encoder.encode(myProfile) {
-//                        UserDefaults.standard.set(encoded, forKey: "currentProfile")
-//                    }
-                }
+                }else{
+                let thedate = Date()
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "dd MMM YYYY"
+                let mydate = dateFormatter.string(from: thedate)
+                let myProfile = Profile(uid: currentUser ,name: "New User", email: "", birthday: mydate, pic: "")
+                    let encoder = JSONEncoder()
+                    if let encoded = try? encoder.encode(myProfile) {
+                        UserDefaults.standard.set(encoded, forKey: "currentProfile")
+                    }
             }
+           
         }
     }
-
+    
    
     override func viewDidLoad() {
         super.viewDidLoad()

@@ -22,7 +22,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.makeKeyAndVisible()
         let currentProfile = UserDefaults.standard.object(forKey: "currentProfile")
-        if currentProfile != nil{
+        if currentProfile != nil {
             let nextViewController = storyBoard.instantiateViewController(withIdentifier: "TabBarController") as! UITabBarController
             window?.rootViewController = nextViewController
             

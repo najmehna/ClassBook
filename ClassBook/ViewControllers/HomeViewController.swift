@@ -20,12 +20,7 @@ class HomeViewController: UIViewController , UITableViewDelegate, UITableViewDat
 //        }
 //    }
     
-    var currentProfile: Profile?{
-        didSet{
-            currentUser = self.currentProfile?.uid
-        }
-    }
-    var currentUser: String?
+    var currentProfile: Profile?
     
     
     @IBOutlet weak var postsTableView: UITableView!
@@ -40,6 +35,7 @@ class HomeViewController: UIViewController , UITableViewDelegate, UITableViewDat
         self.present(homeVC, animated: true, completion: nil)
     }
     override func viewDidLoad() {
+       // UserDefaults.standard.set(nil, forKey: "currentProfile")
         super.viewDidLoad()
         loadData()
         userButton.layer.cornerRadius = 5
@@ -50,32 +46,30 @@ class HomeViewController: UIViewController , UITableViewDelegate, UITableViewDat
             currentProfile = try? decoder.decode(Profile.self, from: savedPerson)
             if currentProfile != nil{
                 print(currentProfile!.name)
+                setUserDetailsInView()
+            }else{
+                    let thedate = Date()
+                    let dateFormatter = DateFormatter()
+                    dateFormatter.dateFormat = "dd MMM YYYY"
+                    let mydate = dateFormatter.string(from: thedate)
+                    currentProfile = Profile(uid: "1",name: "New User", email: "", birthday: mydate, pic: "")
+                
             }
+        }else {
+            print("Something went terribly wrong: There is no currentProfile....")
         }
         //currentProfile = UserDefaults.standard.object(forKey: "currentProfile") as? Profile
-        
         postsTableView.delegate = self
         postsTableView.dataSource = self
-        // Do any additional setup after loading the view.
-        //currentUser = currentProfile?.uid
-        
-        if currentProfile == nil {
-            let thedate = Date()
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "dd MMM YYYY"
-            let mydate = dateFormatter.string(from: thedate)
-             currentProfile = Profile(uid: "1",name: "New User", email: "", birthday: mydate, pic: "")
-        } else{
-            setUserDetailsInView()
-        }
     }
+    
     func setUserDetailsInView(){
 
        // let myUrl = URL(fileURLWithPath: currentProfile!.pic)
         //userImageView.downloadImage(from: myUrl)
         //userImageView.load(url: myUrl)
-//       userImageView.setImageFromUrl(myUrl: currentProfile!.pic)
-        userImageView.kf.setImage(with: URL(fileURLWithPath: currentProfile!.pic))
+       userImageView.setImageFromUrl(myUrl: currentProfile!.pic)
+       // userImageView.kf.setImage(with: URL(fileURLWithPath: currentProfile!.pic))
         userButton.setTitle(currentProfile!.name, for: .normal)
     }
     
