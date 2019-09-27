@@ -35,16 +35,13 @@ class PostViewController: UIViewController , UIImagePickerControllerDelegate, UI
     
     @IBAction func uploadBtnClicked(_ sender: UIButton) {
         if allFieldsOk(){
-           // let storageManager = StorageManager()
-            //storageManager.uploadPostImage(userID: <#T##String#>, postKey: <#T##String#>, data: <#T##Data#>)
-            
             let uid =  currentUser!
             let myTimeStamp = Date().timeIntervalSinceReferenceDate
             let myTime = String(Int(myTimeStamp))
             let postId = myTime + uid
             let myManager = FirebaseManager()
             let myStorageManager = StorageManager()
-            let myImageData = postImage?.jpegData(compressionQuality: 1)
+            let myImageData = postImage?.jpegData(compressionQuality: 0.5)
             
             myStorageManager.uploadPostImage(postID: postId, data: myImageData!){ (success, url) in
                 if success{
@@ -59,15 +56,7 @@ class PostViewController: UIViewController , UIImagePickerControllerDelegate, UI
                     let homeVC =  self.storyboard?.instantiateViewController(withIdentifier: "TabBarController") as! UITabBarController
                     homeVC.selectedIndex = 0
                     self.present(homeVC, animated: true, completion: nil)
-                    //DispatchQueue.main.async {
-                        //showAlert(viewController: self, "Posted your story...")
-                        //let homeVC =  self.storyboard?.instantiateViewController(withIdentifier: "HomeNav") as! UINavigationController
-                            //self.storyboard?.instantiateViewController(withIdentifier: "HomeViewController") as! HomeViewController
-                            
-                        //self.present(homeVC, animated: true, completion: nil)
-                        //self.presentingViewController?.dismiss(animated: true, completion: nil)
-                   // }
-                }else {
+                    }else {
                     print("error adding user to database")
                 }
             }
@@ -79,9 +68,15 @@ class PostViewController: UIViewController , UIImagePickerControllerDelegate, UI
     }
     override func viewDidLoad() {
         super.viewDidLoad()
+        //Keyboard moving functionality part 1 /3....
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+        //end of Keyboard moving functionality part 1 ....
+
         contentView.layer.cornerRadius = 15
         profileButton.layer.cornerRadius = 5
         profileImageView.layer.cornerRadius = 15
+        //Getting the currentProfile from UserDefaults...
         if let savedPerson = UserDefaults.standard.object(forKey: "currentProfile") as? Data
         {
             let decoder = JSONDecoder()
@@ -90,6 +85,8 @@ class PostViewController: UIViewController , UIImagePickerControllerDelegate, UI
                 print(currentProfile!.name)
             }
         }
+        //end of Getting the currentProfile from UserDefaults...
+        
         if currentProfile!.name == "New User" {
             let date = Date()
             let dateFormatter = DateFormatter()
@@ -99,12 +96,20 @@ class PostViewController: UIViewController , UIImagePickerControllerDelegate, UI
         } else{
             setUserDetailsInView()
             }
-        // Do any additional setup after loading the view.
-    }
+         }
 
+    //Keyboard moving functionality part 2/3....
+    @objc func keyboardWillShow(notification: NSNotification){
+        keyboardShow(vc: self, notification: notification)
+    }
+    @objc func keyboardWillHide(notification: NSNotification){
+        keyboardHide(vc: self, notification: notification)
+        
+    }
+    //end of Keyboard moving functionality part 2....
+    
     func setUserDetailsInView(){
-        //setImage(myUrl: currentProfile!.pic)
-       profileImageView.setImageFromUrl(myUrl: currentProfile!.pic)
+        profileImageView.setImageFromUrl(myUrl: currentProfile!.pic)
         profileButton.setTitle(currentProfile!.name, for: .normal)
     }
     

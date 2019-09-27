@@ -9,16 +9,12 @@
 import UIKit
 
 
-class HomeViewController: UIViewController , UITableViewDelegate, UITableViewDataSource{
+class HomeViewController: UIViewController , UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate{
     
     var posts: [Post] = []{didSet{
         postsTableView.reloadData()
         }
     }
-//    var pics: [Data] = []{didSet{
-//        postsTableView.reloadData()
-//        }
-//    }
     
     var currentProfile: Profile?
     
@@ -26,6 +22,8 @@ class HomeViewController: UIViewController , UITableViewDelegate, UITableViewDat
     @IBOutlet weak var postsTableView: UITableView!
  
   
+   
+    @IBOutlet weak var searchTextField: UITextField!
     @IBOutlet weak var userButton: UIButton!
     @IBOutlet weak var userImageView: UIImageView!
     
@@ -34,12 +32,24 @@ class HomeViewController: UIViewController , UITableViewDelegate, UITableViewDat
         let homeVC =  self.storyboard?.instantiateViewController(withIdentifier: "SignInViewController") as! SignInViewController
         self.present(homeVC, animated: true, completion: nil)
     }
+    
+    @IBAction func searchBtnClicked(_ sender: UIButton) {
+        //loadData()
+        if self.searchTextField.hasText{
+            self.searchPosts(for: self.searchTextField.text!)
+        }else{
+            loadData()
+        }
+        
+    }
+    
     override func viewDidLoad() {
-       // UserDefaults.standard.set(nil, forKey: "currentProfile")
         super.viewDidLoad()
         loadData()
         userButton.layer.cornerRadius = 5
         userImageView.layer.cornerRadius = 15
+        
+        //Getting the currentProfile from UserDefaults...
         if let savedPerson = UserDefaults.standard.object(forKey: "currentProfile") as? Data
         {
             let decoder = JSONDecoder()
@@ -48,39 +58,27 @@ class HomeViewController: UIViewController , UITableViewDelegate, UITableViewDat
                 print(currentProfile!.name)
                 setUserDetailsInView()
             }else{
+                //if the currentProfile is not set in UserDefaults
                     let thedate = Date()
                     let dateFormatter = DateFormatter()
                     dateFormatter.dateFormat = "dd MMM YYYY"
                     let mydate = dateFormatter.string(from: thedate)
                     currentProfile = Profile(uid: "1",name: "New User", email: "", birthday: mydate, pic: "")
-                
             }
         }else {
             print("Something went terribly wrong: There is no currentProfile....")
         }
-        //currentProfile = UserDefaults.standard.object(forKey: "currentProfile") as? Profile
+        //End of Getting the currentProfile from UserDefaults...
+        
         postsTableView.delegate = self
         postsTableView.dataSource = self
     }
     
     func setUserDetailsInView(){
-
-       // let myUrl = URL(fileURLWithPath: currentProfile!.pic)
-        //userImageView.downloadImage(from: myUrl)
-        //userImageView.load(url: myUrl)
-       userImageView.setImageFromUrl(myUrl: currentProfile!.pic)
-       // userImageView.kf.setImage(with: URL(fileURLWithPath: currentProfile!.pic))
+        userImageView.setImageFromUrl(myUrl: currentProfile!.pic)
         userButton.setTitle(currentProfile!.name, for: .normal)
     }
-    
-//    func setImage(myUrl:String){
-//        let myStorage = StorageManager()
-//        myStorage.downloadImage(imageName: myUrl) { (success, data) in
-//            DispatchQueue.main.async {
-//                self.userImageView.image = success ? UIImage(data: data!, scale: 0.5) : UIImage(named: defaultImage)
-//            }
-//        }
-//    }
+
 
     func loadData(){
         let myManager = FirebaseManager()
@@ -115,17 +113,24 @@ class HomeViewController: UIViewController , UITableViewDelegate, UITableViewDat
         }
     }
     
-//    func getImagesFromDB(){
-//        let storageManager = StorageManager()
-//        pics = []
-//        for post in posts.indices{
-//            let url = posts[post].postImageUrl
-//            storageManager.downloadImage(imageName: url) { (success, data) in
-//                let myImageData = success ? data! : UIImage(named: defaultImage)!.jpegData(compressionQuality: 1.0)!
-//                self.pics.append(myImageData)
-//            }
-//        }
-//    }
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+            view.endEditing(true)
+    }
+
+    func searchPosts(for searchText: String){
+        if searchText != ""{
+            var tempPosts: [Post] = []
+            for post in posts{
+                if post.postContent.contains(searchText){
+                    tempPosts.append(post)
+                }else if post.userName.contains(searchText){
+                    tempPosts.append(post)
+                }
+            }
+            posts = tempPosts
+            postsTableView.reloadData()
+        }
+    }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return posts.count
@@ -134,58 +139,12 @@ class HomeViewController: UIViewController , UITableViewDelegate, UITableViewDat
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = postsTableView.dequeueReusableCell(withIdentifier: "cell") as! ChatTableViewCell
         let myPost = posts[indexPath.row]
-        //let myPic : Data
-//        if pics.count > indexPath.row{
-//            myPic = pics[indexPath.row]
-//        }else{
-//        myPic = UIImage(named: defaultImage)!.jpegData(compressionQuality: 1.0)!
-//        }
+ 
         print("Post count\(posts.count)")
         print(myPost)
         
         cell.setValues(post: myPost)
         return cell
-        
     }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }
-
-
-//    func setUserDetailsInView1(currentUser: String){
-//
-//        let myManager = FirebaseManager()
-//        myManager.getUserData(for: currentUser) { (success, result) in
-//            if success{
-//                print(result)
-//                // self.profiles = []
-//                let values = result.count
-//                if values > 0{
-//                    let myName = result["name"] as! String
-//                    let myUrl = URL(fileURLWithPath: result["url"] as! String)
-//                    DispatchQueue.main.async {
-//                        self.userButton.setTitle(myName, for: .normal)
-//                    }
-//                    self.userImageView.load(url: myUrl)
-////                    let myStorage = StorageManager()
-////                    myStorage.downloadImage(imageName: myUrl) { (success, data) in
-////                        DispatchQueue.main.async {
-////                            self.userImageView.image = success ? UIImage(data: data!, scale: 0.5) : UIImage(named: defaultImage)
-////                        }
-////                    }
-//
-//                }
-//            }
-//        }
-//    }
 

@@ -75,6 +75,11 @@ class RegisterViewController: UIViewController, UITextFieldDelegate, UIImagePick
         datePicker?.datePickerMode = .date
         datePicker?.addTarget(self, action: #selector(dateValueChanged), for: .valueChanged)
         birthdayTextField.inputView = datePicker
+        //Keyboard moving functionality part 1 /3....
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+        //end of Keyboard moving functionality part 1 ....
+
         setUpUserDetails()
         // Do any additional setup after loading the view.
     }
@@ -118,7 +123,17 @@ class RegisterViewController: UIViewController, UITextFieldDelegate, UIImagePick
         picker.presentingViewController?.dismiss(animated: true, completion: nil)
 
     }
-
+    
+    //Keyboard moving functionality part 2/3....
+    @objc func keyboardWillShow(notification: NSNotification){
+        keyboardShow(vc: self, notification: notification)
+    }
+    @objc func keyboardWillHide(notification: NSNotification){
+        keyboardHide(vc: self, notification: notification)
+        
+    }
+    //end of Keyboard moving functionality part 2....
+    
     /*
     // MARK: - Navigation
 

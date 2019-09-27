@@ -52,4 +52,22 @@ class FirebaseManager {
             completionBlock(false, postDict)
         }
     }
+    
+    
+    func searchPosts(for text:String, completionBlock:@escaping (_ success: Bool, _ snapshot: [String:Any])->Void){
+        var mytext = text
+        var finish = String(text.last!)
+        finish = nextLetter(finish)!
+        mytext.removeLast()
+        mytext = mytext + finish
+        
+        var postDict : [String : Any] = [:]
+        ref.child("posts").queryOrdered(byChild: "postContent").queryStarting(atValue: text).queryEnding(atValue: mytext).observeSingleEvent(of:.value, with: { (snapshot) in
+            postDict = snapshot.value as? [String : Any] ?? [:]
+            completionBlock(true,postDict)
+        }) { (error) in
+            print(error.localizedDescription)
+            completionBlock(false, postDict)
+        }
+    }
 }

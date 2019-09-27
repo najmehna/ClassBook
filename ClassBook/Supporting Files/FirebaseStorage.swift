@@ -22,20 +22,22 @@ class StorageManager {
                     return
                 }
                 let size = metaData.size
-                let url = metaData.path
-                completionBlock(true, url)
-                // to download the uploaded URL from firebase
-//                myRef.downloadURL(completion: { (url, err) in
-//                    if (url != nil){
-//                        print("User Downloded Url \(url?.absoluteString)")
-//                        let urlString = url?.absoluteString
-//                        completionBlock(true, urlString)
-//                        //                        print("The size is: \(size) and the type is: \(url.debugDescription)")
-//                    }
-//                    else{
-//                        completionBlock(false, nil)
-//                    }
-              //  })
+//                let url = metaData.path
+//                completionBlock(true, url)
+                
+                // to get the uploaded URL from firebase
+                myRef.downloadURL(completion: { (url, err) in
+                    if (url != nil){
+                        print("User Downloded Url \(url?.absoluteString)")
+                        let urlString = url?.absoluteString
+                        completionBlock(true, urlString)
+                     }
+                    else{
+                        completionBlock(false, nil)
+                    }
+                })
+                // to get the uploaded URL from firebase
+                
             }else {
                 completionBlock(false, nil)
             }
@@ -51,20 +53,22 @@ class StorageManager {
                     return
                 }
                 let size = metaData.size
-                let url = metaData.path
-                completionBlock(true, url)
-                // to download the uploaded URL from firebase
-//                myRef.downloadURL(completion: { (url, err) in
-//                    if (url != nil){
-//                        print("Downloded Url \(url?.absoluteString)")
-//                        let urlString = url?.absoluteString
-//                        completionBlock(true, urlString)
-////                        print("The size is: \(size) and the type is: \(url.debugDescription)")
-//                    }
-//                    else{
-//                        completionBlock(false, nil)
-//                    }
-               // })
+//                let url = metaData.path
+//                completionBlock(true, url)
+                
+                // to get the uploaded URL from firebase
+                myRef.downloadURL(completion: { (url, err) in
+                    if (url != nil){
+                        print("Downloded Url \(url?.absoluteString)")
+                        let urlString = url?.absoluteString
+                        completionBlock(true, urlString)
+//                        print("The size is: \(size) and the type is: \(url.debugDescription)")
+                    }
+                    else{
+                        completionBlock(false, nil)
+                    }
+                })
+                // to get the uploaded URL from firebase
             }else {
                 completionBlock(false, nil)
             }

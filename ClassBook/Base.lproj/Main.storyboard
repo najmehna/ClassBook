@@ -224,6 +224,9 @@
                                         <rect key="frame" x="345" y="12" width="61" height="36"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                         <state key="normal" title="Search"/>
+                                        <connections>
+                                            <action selector="searchBtnClicked:" destination="bee-7j-832" eventType="touchUpInside" id="6p6-z4-cvH"/>
+                                        </connections>
                                     </button>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="purpleLeaves" translatesAutoresizingMaskIntoConstraints="NO" id="5JM-Qq-UJi">
                                         <rect key="frame" x="8" y="12.5" width="35" height="35"/>
@@ -343,6 +346,7 @@
                     </navigationItem>
                     <connections>
                         <outlet property="postsTableView" destination="DV2-KR-0lq" id="f2H-Uq-y5g"/>
+                        <outlet property="searchTextField" destination="gsc-Ek-RIo" id="Ho9-hs-sIr"/>
                         <outlet property="userButton" destination="GQb-YL-B1e" id="bmA-BJ-b0D"/>
                         <outlet property="userImageView" destination="5JM-Qq-UJi" id="4Mb-GH-tNn"/>
                     </connections>
